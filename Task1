@@ -1,0 +1,67 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+df['Date'] = pd.to_datetime(df['Date'])
+
+monthly_sales = (
+    df.groupby(df['Date'].dt.to_period('M'))['Sales']
+      .sum()
+)
+
+plt.figure(figsize=(10, 5))
+plt.plot(
+    monthly_sales.index.astype(str),
+    monthly_sales.values,
+    marker='o'
+)
+
+plt.title("Monthly Sales Trend")
+plt.xlabel("Month")
+plt.ylabel("Total Sales")
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.savefig("monthly_sales_trend.png")
+plt.show()
+top_products = (
+    df.groupby('Product')['Sales']
+      .sum()
+      .sort_values(ascending=False)
+      .head(10)
+)
+
+plt.figure(figsize=(10, 5))
+
+sns.barplot(
+    x=top_products.values,
+    y=top_products.index
+)
+
+plt.title("Top Products by Sales")
+plt.xlabel("Sales")
+plt.ylabel("Product")
+
+plt.show()
+category_sales = df.groupby('Category')['Sales'].sum()
+
+plt.figure(figsize=(6,6))
+
+plt.pie(
+    category_sales,
+    labels=category_sales.index,
+    autopct='%1.1f%%'
+)
+
+plt.title("Sales by Category")
+
+plt.show()
+plt.figure(figsize=(6, 4))
+
+sns.heatmap(
+    df.corr(numeric_only=True),
+    annot=True,
+    cmap='coolwarm'
+)
+
+plt.title("Correlation Heatmap")
+
+plt.show()
